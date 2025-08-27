@@ -1,0 +1,2 @@
+## Pages
+- [Franco - Desarrollador FullStack](/): Desarrollador FullStack autodidacta especializado en React, Node.js, Java y Spring Boot. Creando soluciones web innovadoras.
