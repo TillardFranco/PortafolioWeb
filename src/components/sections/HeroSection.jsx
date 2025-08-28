@@ -1,26 +1,19 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Button } from '@/components/ui/button';
-import { Mail, Linkedin, Download } from 'lucide-react';
-import { toast } from '@/components/ui/use-toast';
+import React from "react";
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { Mail, Linkedin, Download } from "lucide-react";
+import { toast } from "@/components/ui/use-toast";
 
 const HeroSection = ({ scrollToSection }) => {
-  const handleLinkedIn = () => {
-    toast({
-      title: "🚧 Esta función aún no está implementada",
-      description: "¡Pero no te preocupes! Puedes solicitarla en tu próximo prompt! 🚀"
-    });
-  };
-
   const handleEmail = () => {
-    scrollToSection('contacto');
+    scrollToSection("contacto");
   };
 
   const handleDownloadCV = () => {
-    toast({
-      title: "🚧 Esta función aún no está implementada",
-      description: "¡Pero no te preocupes! Puedes solicitarla en tu próximo prompt! 🚀"
-    });
+    const link = document.createElement("a");
+    link.href = "/FrancoTillard-CV.pdf";
+    link.download = "FrancoTillard-CV.pdf";
+    link.click();
   };
 
   return (
@@ -34,35 +27,63 @@ const HeroSection = ({ scrollToSection }) => {
             className="relative inline-block"
           >
             <div className="w-16 h-16 rounded-full glass-effect p-1">
-              <img  class="w-full h-full rounded-full object-cover" alt="Franco - Desarrollador FullStack" src="https://images.unsplash.com/photo-1660527382879-14bbba78edb1" />
+              <img
+                class="w-full h-full rounded-full object-cover"
+                alt="Franco - Desarrollador FullStack"
+                src="/HeroPic.png"
+              />
             </div>
           </motion.div>
-          <Button className="available-btn text-xs px-3 py-1">
-            <span className="available-dot" />
-            Disponible para trabajar
-          </Button>
+          <a
+            href="https://www.linkedin.com/in/tillardfrancotomas/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Button className="available-btn text-xs px-3 py-1">
+              <span className="available-dot" />
+              Disponible para trabajar
+            </Button>
+          </a>
         </div>
 
         <h1 className="text-4xl md:text-5xl font-bold mb-3 text-foreground">
-          Hey, soy <span className="gradient-text">Franco</span>
+          Hola, soy <span className="gradient-text">Franco</span>
         </h1>
 
         <p className="text-base md:text-lg text-muted-foreground mb-8 max-w-xl">
-          Desarrollador fullstack y estudiante avanzado de Ingeniería en Software, con gran interés en el aprendizaje constante y las nuevas tecnologías.
+          Desarrollador fullstack y estudiante avanzado de Ingeniería en
+          Software, con gran interés en el aprendizaje constante y las nuevas
+          tecnologías.
         </p>
 
         <div className="flex flex-wrap gap-3 justify-start items-center">
-          <Button onClick={handleEmail} variant="outline" className="border-border text-foreground px-5 py-2 rounded-lg flex items-center gap-2 transition-all duration-300 hover:scale-105 hover:bg-accent">
+          <Button
+            onClick={handleEmail}
+            variant="outline"
+            className="border-border text-foreground px-5 py-2 rounded-lg flex items-center gap-2 transition-all duration-300 hover:scale-105 hover:bg-accent"
+          >
             <Mail className="w-4 h-4" />
             Contáctame
           </Button>
-          
-          <Button onClick={handleLinkedIn} variant="outline" className="border-border text-foreground px-5 py-2 rounded-lg flex items-center gap-2 transition-all duration-300 hover:scale-105 hover:bg-accent">
-            <Linkedin className="w-4 h-4" />
-            LinkedIn
-          </Button>
+          <a
+            href="https://www.linkedin.com/in/tillardfrancotomas/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Button
+              variant="outline"
+              className="border-border text-foreground px-5 py-2 rounded-lg flex items-center gap-2 transition-all duration-300 hover:scale-105 hover:bg-accent"
+            >
+              <Linkedin className="w-4 h-4" />
+              LinkedIn
+            </Button>
+          </a>
 
-          <Button onClick={handleDownloadCV} variant="outline" className="border-border text-foreground px-5 py-2 rounded-lg flex items-center gap-2 transition-all duration-300 hover:scale-105 hover:bg-accent">
+          <Button
+            onClick={handleDownloadCV}
+            variant="outline"
+            className="border-border text-foreground px-5 py-2 rounded-lg flex items-center gap-2 transition-all duration-300 hover:scale-105 hover:bg-accent"
+          >
             <Download className="w-4 h-4" />
             Curriculum Vitae
           </Button>
