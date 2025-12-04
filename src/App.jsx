@@ -2,6 +2,7 @@ import React from "react";
 import { Helmet } from "react-helmet";
 import { Toaster } from "@/components/ui/toaster";
 import Navbar from "@/components/Navbar";
+import ScrollProgress from "@/components/ScrollProgress";
 import HeroSection from "@/components/sections/HeroSection";
 import EducationExperienceSection from "@/components/sections/EducationExperienceSection";
 import ExperienceSection from "@/components/sections/ExperienceSection";
@@ -21,19 +22,20 @@ function App() {
   return (
     <>
       <Helmet>
-        <title>Porfolio Tillard Franco</title>
+        <title>Franco Tillard - Portfolio</title>
         <meta
           name="description"
-          content="Desarrollador FullStack autodidacta especializado en React, Node.js, Java y Spring Boot. Creando soluciones web innovadoras."
+          content="Self-taught FullStack Developer specialized in React, Node.js, Java and Spring Boot. Creating innovative web solutions."
         />
-        <meta property="og:title" content="Franco - Desarrollador FullStack" />
+        <meta property="og:title" content="Franco Tillard - FullStack Developer" />
         <meta
           property="og:description"
-          content="Desarrollador FullStack autodidacta especializado en React, Node.js, Java y Spring Boot. Creando soluciones web innovadoras."
+          content="Self-taught FullStack Developer specialized in React, Node.js, Java and Spring Boot. Creating innovative web solutions."
         />
       </Helmet>
 
       <div className="min-h-screen bg-background text-foreground">
+        <ScrollProgress />
         <AnimatedSection delay={0}>
           <Navbar scrollToSection={scrollToSection} />
         </AnimatedSection>
