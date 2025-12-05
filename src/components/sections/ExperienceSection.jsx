@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { ExternalLink, ArrowUpRight, Code2 } from "lucide-react";
+import { ExternalLink, ArrowUpRight, Code2, Github } from "lucide-react";
 
 const projects = [
   {
@@ -14,28 +14,41 @@ const projects = [
     status: "Completed",
     gradient: "from-emerald-500/20 to-teal-500/20",
     link: "https://airesdellagolosmolinos.com.ar/home",
+    github: "https://github.com/TillardFranco/aires-del-lago",
   },
   {
     title: "Farmaser",
     subtitle: "Pharmacy management system",
     description:
       "Comprehensive pharmacy management system with inventory control, sales, and reports. Scalable architecture with Spring Boot and JWT.",
-    tags: ["Java", "Spring Boot", "MySQL", "JWT"],
+    tags: ["Java", "Spring Boot", "MySQL", "React", "JWT", "Spring Security"],
     imageText: "In development",
-    status: "In Development",
+    image: "/farmaser.jpg",
+    status: "Completed",
     gradient: "from-purple-500/20 to-pink-500/20",
     link: null,
+    github: null,
   },
   {
-    title: "Real Estate Analysis",
-    subtitle: "Real estate analysis platform",
+    title: "Internal management system",
+    subtitle: "Enterprise Resource Planning (ERP) System",
     description:
-      "Real estate analysis system with robust architecture and optimized database. Interactive dashboard with data visualization.",
-    tags: ["Java", "Spring Boot", "MySQL", "React"],
-    imageText: "In development",
-    status: "In Development",
+      "A generic and modular Backend ERP system built with Spring Boot 3.4.4 and Java 17. Designed to be easily adaptable to various types of businesses (pharmacies, retail stores, supermarkets, etc.). It streamlines core business processes by integrating inventory, sales, and management into a unified platform.",
+    tags: [
+      "Java",
+      "Spring Boot",
+      "MySQL",
+      "JWT",
+      "MapStruct (Mappers)",
+      "Spring Data JPA",
+      "Spring Security",
+    ],
+    imageText: "Internal management system",
+    image: "/Sistema-Gestion-Backend.png",
+    status: "Completed",
     gradient: "from-blue-500/20 to-cyan-500/20",
-    link: null,
+    link: "https://github.com/TillardFranco/Sistema-Gestion-Backend-ERP",
+    github: "https://github.com/TillardFranco/Sistema-Gestion-Backend-ERP",
   },
 ];
 
@@ -173,6 +186,18 @@ const ExperienceSection = () => {
                     </div>
                   </div>
                 </div>
+
+                {/* GitHub button - bottom right corner */}
+                {project.github && (
+                  <a
+                    href={project.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="absolute bottom-4 right-4 z-20 p-3 rounded-full bg-background/80 backdrop-blur-sm border border-border/50 hover:border-primary/50 hover:bg-primary/10 transition-all duration-300 hover:scale-110 shadow-lg"
+                  >
+                    <Github className="w-5 h-5 text-muted-foreground hover:text-primary transition-colors" />
+                  </a>
+                )}
 
                 {/* Shine effect */}
                 <div className="absolute inset-0 -z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
