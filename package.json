@@ -8,7 +8,8 @@
   "homepage": "https://github.com/tillardfranco/PortafolioWeb",
   "scripts": {
     "dev": "vite",
-    "build": "node tools/generate-llms.js || true && vite build",
+    "prebuild": "node tools/generate-llms.js || node -e \"process.exit(0)\"",
+    "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
