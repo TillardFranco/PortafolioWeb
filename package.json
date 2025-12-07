@@ -1,8 +1,11 @@
 {
-  "name": "web-app",
+  "name": "portafolio-web-franco-tillard",
   "type": "module",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
+  "description": "Portfolio personal de Franco Tillard - FullStack Developer",
+  "author": "Franco Tillard",
+  "homepage": "https://github.com/tillardfranco/PortafolioWeb",
   "scripts": {
     "dev": "vite",
     "build": "node tools/generate-llms.js || true && vite build",

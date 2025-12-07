@@ -1,7 +1,14 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Mail, Linkedin, Github, Download, ArrowDown, Sparkles } from "lucide-react";
+import {
+  Mail,
+  Linkedin,
+  Github,
+  Download,
+  ArrowDown,
+  Sparkles,
+} from "lucide-react";
 
 const HeroSection = ({ scrollToSection }) => {
   const handleEmail = () => {
@@ -10,8 +17,8 @@ const HeroSection = ({ scrollToSection }) => {
 
   const handleDownloadCV = () => {
     const link = document.createElement("a");
-    link.href = "/FrancoTillard-CV.pdf";
-    link.download = "FrancoTillard-CV.pdf";
+    link.href = "/CurriculumVitae-TillardFrancoTomas.pdf";
+    link.download = "CurriculumVitae-TillardFrancoTomas.pdf";
     link.click();
   };
 
@@ -43,7 +50,10 @@ const HeroSection = ({ scrollToSection }) => {
   };
 
   return (
-    <section id="hero" className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden">
+    <section
+      id="hero"
+      className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden"
+    >
       {/* Background decorative elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse" />
@@ -65,16 +75,16 @@ const HeroSection = ({ scrollToSection }) => {
             <div className="relative">
               {/* Glow effect */}
               <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-full blur-2xl animate-pulse" />
-              
+
               {/* Image container */}
               <motion.div
                 initial={{ scale: 0, rotate: -180 }}
                 animate={{ scale: 1, rotate: 0 }}
-                transition={{ 
-                  type: "spring", 
-                  stiffness: 200, 
+                transition={{
+                  type: "spring",
+                  stiffness: 200,
                   damping: 20,
-                  delay: 0.4 
+                  delay: 0.4,
                 }}
                 className="relative w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden border-4 border-primary/20 dark:border-primary/30 shadow-2xl"
               >
@@ -84,8 +94,10 @@ const HeroSection = ({ scrollToSection }) => {
                   src="/HeroPic.png"
                 />
                 {/* Animated border */}
-                <div className="absolute inset-0 rounded-full border-4 border-transparent bg-gradient-to-r from-purple-500 via-blue-500 to-purple-500 opacity-20 animate-spin-slow" 
-                  style={{ animationDuration: '8s' }} />
+                <div
+                  className="absolute inset-0 rounded-full border-4 border-transparent bg-gradient-to-r from-purple-500 via-blue-500 to-purple-500 opacity-20 animate-spin-slow"
+                  style={{ animationDuration: "8s" }}
+                />
               </motion.div>
 
               {/* Floating badge */}
@@ -137,8 +149,11 @@ const HeroSection = ({ scrollToSection }) => {
               className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto md:mx-0 leading-relaxed"
             >
               FullStack developer and advanced{" "}
-              <span className="font-semibold text-foreground">Software Engineering</span> student, 
-              with a strong interest in continuous learning and new technologies.
+              <span className="font-semibold text-foreground">
+                Software Engineering
+              </span>{" "}
+              student, with a strong interest in continuous learning and new
+              technologies.
             </motion.p>
 
             {/* CTA Buttons */}
