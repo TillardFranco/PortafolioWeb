@@ -35,6 +35,11 @@ export const ui = {
       sourceCode: "Source code",
       screenshot: "screenshot",
       logo: "logo",
+      tabs: "Project groups",
+      tabFeatured: "Featured",
+      tabDevbit: "Dev.Bit",
+      devbitLead: "Client projects delivered at Dev.Bit, the studio I co-founded.",
+      devbitVisit: "Visit Dev.Bit",
     },
     experience: {
       title: "Where I build and where I learn.",
@@ -89,6 +94,11 @@ export const ui = {
       sourceCode: "Código fuente",
       screenshot: "captura",
       logo: "logo",
+      tabs: "Grupos de proyectos",
+      tabFeatured: "Destacados",
+      tabDevbit: "Dev.Bit",
+      devbitLead: "Proyectos para clientes entregados en Dev.Bit, el estudio que cofundé.",
+      devbitVisit: "Visitar Dev.Bit",
     },
     experience: {
       title: "Dónde construyo y dónde aprendo.",

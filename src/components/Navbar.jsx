@@ -3,12 +3,17 @@ import { motion } from "framer-motion";
 import { Download } from "lucide-react";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { profile, projects } from "@/data/profile";
+import { devbit, profile, projects } from "@/data/profile";
 import { useLanguage } from "@/i18n/LanguageProvider";
 import { cn } from "@/lib/utils";
 
+// Unique projects across both tabs, in case one is listed in both.
+const PROJECT_COUNT = new Set(
+  [...projects, ...devbit.projects].map((project) => project.title.en ?? project.title)
+).size;
+
 const NAV_ITEMS = [
-  { id: "projects", count: projects.length },
+  { id: "projects", count: PROJECT_COUNT },
   { id: "experience" },
   { id: "contact" },
 ];

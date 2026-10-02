@@ -28,19 +28,19 @@ export const profile = {
 
 export const projects = [
   {
-    title: "Aires del Lago",
+    title: "Dev.Bit",
     subtitle: {
-      en: "Cabin rental promotional website",
-      es: "Sitio promocional de alquiler de cabañas",
+      en: "Software studio website",
+      es: "Sitio web del estudio de software",
     },
     description: {
-      en: "Promotional website for a cabin rental business, built end to end with responsive design, performance optimization and SEO and UX best practices.",
-      es: "Sitio promocional para un complejo de cabañas, desarrollado de punta a punta con diseño responsive, optimización de rendimiento y buenas prácticas de SEO y UX.",
+      en: "Website for Dev.Bit, the software studio I co-founded, with services, client portfolio and contact form.",
+      es: "Sitio web de Dev.Bit, el estudio de software que cofundé, con servicios, portfolio de clientes y formulario de contacto.",
     },
-    tags: ["React", "Vite", "Tailwind CSS"],
-    image: "/AiresDelLago.png",
-    link: "https://airesdellagolosmolinos.com.ar/home",
-    github: "https://github.com/TillardFranco/aires-del-lago",
+    tags: ["React", "React Router", "Tailwind CSS"],
+    image: "/devbit/DevBitSite.png",
+    link: "https://www.devbitsoftware.com/",
+    github: null,
   },
   {
     title: "Farmaser",
@@ -77,6 +77,57 @@ export const projects = [
     github: "https://github.com/TillardFranco/Sistema-Gestion-Backend-ERP",
   },
 ];
+
+// Client work delivered at Dev.Bit, shown in the "Dev.Bit" projects tab.
+export const devbit = {
+  site: "https://www.devbitsoftware.com/",
+  projects: [
+    {
+      title: "Aires del Lago",
+      category: { en: "Website · Landing page", es: "Sitio web · Landing page" },
+      description: {
+        en: "Landing page for a cabin complex with online booking.",
+        es: "Landing page para complejo de cabañas con sistema de reservas online.",
+      },
+      tags: ["React", "Vite", "Tailwind CSS"],
+      image: "/devbit/AiresDelLago.webp",
+      link: "https://airesdellagolosmolinos.com.ar",
+    },
+    {
+      title: "ORIGEN",
+      category: { en: "Online store · E-commerce", es: "Tienda online · E-commerce" },
+      description: {
+        en: "Streetwear clothing store with product catalog, shopping cart and direct orders through WhatsApp.",
+        es: "Tienda de ropa streetwear con catálogo de productos, carrito de compras y pedidos directos por WhatsApp.",
+      },
+      tags: ["React", "Vite", "JavaScript"],
+      image: "/devbit/Origen.webp",
+      link: "https://origenoficial.com.ar",
+    },
+    {
+      title: "Ana Gottardi",
+      category: { en: "Website · Bakery", es: "Sitio web · Pastelería" },
+      description: {
+        en: "Website for an artisan bakery with product catalog, order cart and orders sent straight to WhatsApp.",
+        es: "Sitio web para pastelería artesanal con catálogo de productos, carrito de pedidos y envío directo por WhatsApp.",
+      },
+      tags: ["React", "Vite", "CSS Modules"],
+      image: "/devbit/Anagottardi.webp",
+      link: "https://anagottardi.com.ar",
+    },
+    {
+      title: "Dra. Ávila Consultorios",
+      category: { en: "Website · Medical center", es: "Sitio web · Centro médico" },
+      description: {
+        en: "Website for a cardiology and pediatrics medical center with integrated online appointment booking.",
+        es: "Sitio para un centro médico de cardiología y pediatría con sistema de turnos online integrado.",
+      },
+      tags: ["React", "Vite", "CSS Modules"],
+      image: "/devbit/Drasavila-consultorios.webp",
+      link: "https://drasavila-consultorios.ar",
+    },
+  ],
+};
 
 export const experience = [
   {
