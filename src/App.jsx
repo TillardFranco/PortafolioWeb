@@ -1,67 +1,37 @@
 import React from "react";
 import { Helmet } from "react-helmet";
-import { Toaster } from "@/components/ui/toaster";
+import { MotionConfig } from "framer-motion";
 import Navbar from "@/components/Navbar";
-import ScrollProgress from "@/components/ScrollProgress";
 import HeroSection from "@/components/sections/HeroSection";
-import EducationExperienceSection from "@/components/sections/EducationExperienceSection";
+import QuoteSection from "@/components/sections/QuoteSection";
+import ProjectsSection from "@/components/sections/ProjectsSection";
 import ExperienceSection from "@/components/sections/ExperienceSection";
-import TechnologiesSection from "@/components/sections/TechnologiesSection";
-import AboutSection from "@/components/sections/AboutSection";
+import StackSection from "@/components/sections/StackSection";
 import ContactSection from "@/components/sections/ContactSection";
-import AnimatedSection from "@/components/AnimatedSection";
+import { useLanguage } from "@/i18n/LanguageProvider";
 
 function App() {
-  const scrollToSection = (id) => {
-    const section = document.getElementById(id);
-    if (section) {
-      section.scrollIntoView({ behavior: "smooth" });
-    }
-  };
+  const { lang, t } = useLanguage();
 
   return (
-    <>
-      <Helmet>
-        <title>Franco Tillard - Portfolio</title>
-        <meta
-          name="description"
-          content="Self-taught FullStack Developer specialized in React, Node.js, Java and Spring Boot. Creating innovative web solutions."
-        />
-        <meta property="og:title" content="Franco Tillard - FullStack Developer" />
-        <meta
-          property="og:description"
-          content="Self-taught FullStack Developer specialized in React, Node.js, Java and Spring Boot. Creating innovative web solutions."
-        />
+    <MotionConfig reducedMotion="user">
+      <Helmet htmlAttributes={{ lang }}>
+        <title>{t("meta.title")}</title>
+        <meta name="description" content={t("meta.description")} />
+        <meta property="og:title" content={t("meta.title")} />
+        <meta property="og:description" content={t("meta.description")} />
       </Helmet>
 
-      <div className="min-h-screen bg-background text-foreground">
-        <ScrollProgress />
-        <AnimatedSection delay={0}>
-          <Navbar scrollToSection={scrollToSection} />
-        </AnimatedSection>
-        <main>
-          <AnimatedSection delay={0.1}>
-            <HeroSection scrollToSection={scrollToSection} />
-          </AnimatedSection>
-          <AnimatedSection delay={0.2}>
-            <EducationExperienceSection />
-          </AnimatedSection>
-          <AnimatedSection delay={0.3}>
-            <ExperienceSection />
-          </AnimatedSection>
-          <AnimatedSection delay={0.4}>
-            <TechnologiesSection />
-          </AnimatedSection>
-          <AnimatedSection delay={0.5}>
-            <AboutSection />
-          </AnimatedSection>
-          <AnimatedSection delay={0.6}>
-            <ContactSection />
-          </AnimatedSection>
-        </main>
-        <Toaster />
-      </div>
-    </>
+      <Navbar />
+      <main>
+        <HeroSection />
+        <QuoteSection />
+        <ProjectsSection />
+        <ExperienceSection />
+        <StackSection />
+        <ContactSection />
+      </main>
+    </MotionConfig>
   );
 }
 
