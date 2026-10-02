@@ -28,19 +28,19 @@ export const profile = {
 
 export const projects = [
   {
-    title: "Aires del Lago",
+    title: "Dev.Bit",
     subtitle: {
-      en: "Cabin rental promotional website",
-      es: "Sitio promocional de alquiler de cabañas",
+      en: "Software studio website",
+      es: "Sitio web del estudio de software",
     },
     description: {
-      en: "Promotional website for a cabin rental business, built end to end with responsive design, performance optimization and SEO and UX best practices.",
-      es: "Sitio promocional para un complejo de cabañas, desarrollado de punta a punta con diseño responsive, optimización de rendimiento y buenas prácticas de SEO y UX.",
+      en: "Website for Dev.Bit, the software studio I co-founded, with services, client portfolio and contact form.",
+      es: "Sitio web de Dev.Bit, el estudio de software que cofundé, con servicios, portfolio de clientes y formulario de contacto.",
     },
-    tags: ["React", "Vite", "Tailwind CSS"],
-    image: "/AiresDelLago.png",
-    link: "https://airesdellagolosmolinos.com.ar/home",
-    github: "https://github.com/TillardFranco/aires-del-lago",
+    tags: ["React", "React Router", "Tailwind CSS"],
+    image: "/devbit/DevBitSite.png",
+    link: "https://www.devbitsoftware.com/",
+    github: null,
   },
   {
     title: "Farmaser",

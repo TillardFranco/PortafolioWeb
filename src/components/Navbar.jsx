@@ -7,7 +7,7 @@ import { devbit, profile, projects } from "@/data/profile";
 import { useLanguage } from "@/i18n/LanguageProvider";
 import { cn } from "@/lib/utils";
 
-// Unique projects across both tabs (Aires del Lago appears in both).
+// Unique projects across both tabs, in case one is listed in both.
 const PROJECT_COUNT = new Set(
   [...projects, ...devbit.projects].map((project) => project.title.en ?? project.title)
 ).size;
