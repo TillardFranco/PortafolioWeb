@@ -1,0 +1,112 @@
+export const LANGUAGES = ["en", "es"];
+
+export const ui = {
+  en: {
+    meta: {
+      title: "Franco Tillard - FullStack Developer",
+      description:
+        "FullStack developer and Software Engineering student. Web products with React, Java and Spring Boot, from idea to production.",
+    },
+    nav: {
+      projects: "Projects",
+      experience: "Experience",
+      contact: "Contact",
+      cv: "CV",
+      home: "Back to top",
+      toggleTheme: "Toggle theme",
+      switchLanguage: "Ver en español",
+    },
+    hero: {
+      available: "Available for work",
+      collabOn: "Collab on",
+      collabOff: "Collab off",
+      discover: "Discover me",
+      pixelMode: "Pixel mode",
+      selection: "Text",
+      you: "You",
+    },
+    projects: {
+      title: ["Selected", "projects"],
+      lead: "Real products for real clients, from a promotional website to full management systems.",
+      project: "Project",
+      technologies: "Technologies used",
+      description: "Description",
+      liveSite: "Live site",
+      sourceCode: "Source code",
+      screenshot: "screenshot",
+      logo: "logo",
+    },
+    experience: {
+      title: "Where I build and where I learn.",
+      work: "Work",
+      education: "Education",
+    },
+    stack: {
+      title: "Stack I work with",
+    },
+    contact: {
+      title: ["Let's build", "something"],
+      lead: "I'm looking to join a team where I can add value from day one, keep growing and take on new technical challenges.",
+      getInTouch: "Get in touch",
+      copyEmail: "Copy email",
+      copied: "Copied",
+      copyFailed: "Copy failed",
+      downloadCv: "Download CV",
+      backToTop: "Back to top",
+    },
+  },
+  es: {
+    meta: {
+      title: "Franco Tillard - Desarrollador FullStack",
+      description:
+        "Desarrollador FullStack y estudiante de Ingeniería en Software. Productos web con React, Java y Spring Boot, de la idea a producción.",
+    },
+    nav: {
+      projects: "Proyectos",
+      experience: "Experiencia",
+      contact: "Contacto",
+      cv: "CV",
+      home: "Volver arriba",
+      toggleTheme: "Cambiar tema",
+      switchLanguage: "View in English",
+    },
+    hero: {
+      available: "Disponible para trabajar",
+      collabOn: "Colaboración activa",
+      collabOff: "Colaboración inactiva",
+      discover: "Conóceme",
+      pixelMode: "Modo píxel",
+      selection: "Texto",
+      you: "Tú",
+    },
+    projects: {
+      title: ["Proyectos", "destacados"],
+      lead: "Productos reales para clientes reales, desde un sitio promocional hasta sistemas de gestión completos.",
+      project: "Proyecto",
+      technologies: "Tecnologías usadas",
+      description: "Descripción",
+      liveSite: "Ver sitio",
+      sourceCode: "Código fuente",
+      screenshot: "captura",
+      logo: "logo",
+    },
+    experience: {
+      title: "Dónde construyo y dónde aprendo.",
+      work: "Trabajo",
+      education: "Formación",
+    },
+    stack: {
+      title: "Stack con el que trabajo",
+    },
+    contact: {
+      title: ["Construyamos", "algo juntos"],
+      lead: "Busco sumarme a un equipo donde aportar valor desde el primer día, seguir creciendo y asumir nuevos desafíos técnicos.",
+      getInTouch: "Escríbeme",
+      copyEmail: "Copiar email",
+      copied: "Copiado",
+      copyFailed: "No se pudo copiar",
+      downloadCv: "Descargar CV",
+      backToTop: "Volver arriba",
+    },
+  },
+};

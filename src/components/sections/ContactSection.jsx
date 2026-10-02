@@ -1,171 +1,113 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { Mail, Linkedin, Github, Copy, Check } from "lucide-react";
+import { ArrowUp, ArrowUpRight, Check, Copy, Download, Mail } from "lucide-react";
+import { profile } from "@/data/profile";
+import { useLanguage } from "@/i18n/LanguageProvider";
+
+const reveal = (delay = 0) => ({
+  initial: { opacity: 0, y: 32 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, amount: 0.3 },
+  transition: { duration: 0.8, delay, ease: [0.16, 1, 0.3, 1] },
+});
+
+const COPY_LABEL_KEY = {
+  idle: "contact.copyEmail",
+  copied: "contact.copied",
+  error: "contact.copyFailed",
+};
 
 const ContactSection = () => {
-  const email = "tillardtomasfranco@gmail.com";
-  const [copied, setCopied] = React.useState(false);
+  const [copyState, setCopyState] = useState("idle");
+  const { t } = useLanguage();
+  const [titleTop, titleBottom] = t("contact.title");
 
-  const handleCopyEmail = () => {
-    navigator.clipboard.writeText(email);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const copyEmail = async () => {
+    try {
+      await navigator.clipboard.writeText(profile.email);
+      setCopyState("copied");
+    } catch {
+      setCopyState("error");
+    }
+    setTimeout(() => setCopyState("idle"), 2000);
   };
 
-  const contactLinks = [
-    {
-      name: "LinkedIn",
-      icon: Linkedin,
-      href: "https://www.linkedin.com/in/tillardfrancotomas/",
-      color: "hover:text-[#0077B5]",
-      bgColor: "hover:bg-[#0077B5]/10",
-    },
-    {
-      name: "GitHub",
-      icon: Github,
-      href: "https://github.com/tillardfranco",
-      color: "hover:text-foreground",
-      bgColor: "hover:bg-foreground/10",
-    },
+  const links = [
+    { label: "LinkedIn", href: profile.links.linkedin, icon: ArrowUpRight, external: true },
+    { label: "GitHub", href: profile.links.github, icon: ArrowUpRight, external: true },
+    { label: t("contact.downloadCv"), href: profile.cv, icon: Download, download: true },
   ];
 
   return (
-    <section id="contacto" className="py-24 px-4 relative">
-      <div className="max-w-3xl mx-auto">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-secondary/50 backdrop-blur-sm mb-6">
-            <Mail className="w-4 h-4 text-primary" />
-            <span className="text-sm font-medium text-muted-foreground">
-              Let's Talk
-            </span>
-          </div>
-          <h2 className="text-4xl md:text-6xl font-bold mb-4 gradient-text">
-            Get In Touch
-          </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Have a question or want to work together? I'm always open to new
-            opportunities and interesting projects.
-          </p>
-        </motion.div>
-
-        {/* Main CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="glass-effect rounded-2xl p-8 md:p-12 border border-border/50 hover:border-primary/50 transition-all duration-300 text-center"
-        >
-          <motion.div
-            initial={{ scale: 0 }}
-            whileInView={{ scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ type: "spring", stiffness: 200, delay: 0.3 }}
-            className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-r from-purple-600/20 to-blue-600/20 flex items-center justify-center"
+    <section id="contact" className="scroll-mt-16">
+      <div className="mx-auto grid max-w-[1400px] gap-14 px-4 py-20 md:px-6 md:py-32 lg:grid-cols-12 lg:gap-6">
+        <div className="lg:col-span-8">
+          <motion.h2
+            {...reveal()}
+            className="text-[clamp(2.75rem,8vw,7rem)] font-semibold uppercase leading-[0.92] tracking-[-0.04em]"
           >
-            <Mail className="w-10 h-10 text-primary" />
-          </motion.div>
+            {titleTop}
+            <br />
+            {titleBottom}
+          </motion.h2>
+          <motion.p
+            {...reveal(0.1)}
+            className="mt-8 max-w-[48ch] text-muted-foreground md:text-lg"
+          >
+            {t("contact.lead")}
+          </motion.p>
 
-          <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
-            Say Hello!
-          </h3>
-
-          <p className="text-muted-foreground mb-8 max-w-lg mx-auto">
-            Whether you have a project in mind, a job opportunity, or just want
-            to say hi, feel free to reach out.
-          </p>
-
-          {/* Email Button */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
-            <a href={`mailto:${email}`}>
-              <Button
-                size="lg"
-                className="group relative overflow-hidden bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-8 py-6 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
-              >
-                <span className="relative z-10 flex items-center gap-2">
-                  <Mail className="w-5 h-5" />
-                  Send me an Email
-                </span>
-                <div className="absolute inset-0 bg-white/20 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300" />
-              </Button>
-            </a>
-
-            <Button
-              onClick={handleCopyEmail}
-              size="lg"
-              variant="outline"
-              className="border-2 border-border hover:border-primary text-foreground px-6 py-6 rounded-xl font-medium transition-all duration-300 hover:scale-105"
+          <motion.div {...reveal(0.2)} className="mt-10 flex flex-wrap items-center gap-3">
+            <a
+              href={`mailto:${profile.email}`}
+              className="inline-flex items-center gap-2 rounded-full bg-foreground px-6 py-3 text-sm font-medium uppercase tracking-[0.08em] text-background transition-transform active:scale-[0.98]"
             >
-              {copied ? (
-                <span className="flex items-center gap-2 text-green-500">
-                  <Check className="w-5 h-5" />
-                  Copied!
-                </span>
+              <Mail className="h-4 w-4" strokeWidth={1.75} />
+              {t("contact.getInTouch")}
+            </a>
+            <button
+              type="button"
+              onClick={copyEmail}
+              className="inline-flex items-center gap-2 rounded-full border bg-card px-5 py-3 font-mono text-xs transition-colors hover:border-foreground/30 active:scale-[0.98]"
+              aria-label={t(COPY_LABEL_KEY.idle)}
+            >
+              {copyState === "copied" ? (
+                <Check className="h-3.5 w-3.5 text-success" />
               ) : (
-                <span className="flex items-center gap-2">
-                  <Copy className="w-5 h-5" />
-                  Copy Email
-                </span>
+                <Copy className="h-3.5 w-3.5" strokeWidth={1.75} />
               )}
-            </Button>
-          </div>
+              <span aria-live="polite">
+                {copyState === "idle" ? profile.email : t(COPY_LABEL_KEY[copyState])}
+              </span>
+            </button>
+          </motion.div>
+        </div>
 
-          {/* Email display */}
-          <p className="text-muted-foreground text-sm mb-8">
-            <span className="font-mono bg-secondary/50 px-3 py-1.5 rounded-lg">
-              {email}
-            </span>
-          </p>
-
-          {/* Divider */}
-          <div className="flex items-center gap-4 mb-8">
-            <div className="flex-1 h-px bg-border" />
-            <span className="text-muted-foreground text-sm">or find me on</span>
-            <div className="flex-1 h-px bg-border" />
-          </div>
-
-          {/* Social Links */}
-          <div className="flex items-center justify-center gap-4">
-            {contactLinks.map((link, index) => (
-              <motion.a
-                key={link.name}
-                href={link.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.4 + index * 0.1 }}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
-                className={`flex items-center gap-2 px-6 py-3 rounded-xl border border-border text-muted-foreground transition-all duration-300 ${link.color} ${link.bgColor}`}
+        <motion.ul {...reveal(0.25)} className="self-end lg:col-span-3 lg:col-start-10">
+          {links.map(({ label, href, icon: Icon, external, download }) => (
+            <li key={label} className="border-b first:border-t">
+              <a
+                href={href}
+                {...(external && { target: "_blank", rel: "noopener noreferrer" })}
+                {...(download && { download: true })}
+                className="group flex items-center justify-between py-4 text-sm uppercase tracking-[0.08em] transition-colors hover:text-brand"
               >
-                <link.icon className="w-5 h-5" />
-                <span className="font-medium">{link.name}</span>
-              </motion.a>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* Footer message */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.6 }}
-          className="text-center text-muted-foreground text-sm mt-12"
-        >
-          I typically respond within 24-48 hours ⚡
-        </motion.p>
+                {label}
+                <Icon className="h-4 w-4 transition-transform group-hover:-translate-y-0.5" strokeWidth={1.75} />
+              </a>
+            </li>
+          ))}
+        </motion.ul>
       </div>
+
+      <footer className="border-t">
+        <div className="mx-auto flex max-w-[1400px] items-center justify-between gap-4 px-4 py-6 text-sm text-muted-foreground md:px-6">
+          <span>&copy; {new Date().getFullYear()} {profile.fullName}</span>
+          <a href="#hero" className="inline-flex items-center gap-1.5 transition-colors hover:text-foreground">
+            {t("contact.backToTop")} <ArrowUp className="h-3.5 w-3.5" />
+          </a>
+        </div>
+      </footer>
     </section>
   );
 };

@@ -41,3 +41,7 @@ lerna-debug.log*
 
 # OS
 Thumbs.db
+
+# Local tooling
+.atl/
+.claude/launch.json
