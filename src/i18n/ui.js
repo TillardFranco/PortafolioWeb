@@ -25,6 +25,11 @@ export const ui = {
       selection: "Text",
       you: "You",
       resetLayout: "Reset layout",
+      cursorMessages: [
+        "Hey! I was working on that",
+        "Careful, that's my cursor",
+        "Put me down, I'm mid-commit",
+      ],
     },
     projects: {
       title: ["Selected", "projects"],
@@ -85,6 +90,11 @@ export const ui = {
       selection: "Texto",
       you: "Tú",
       resetLayout: "Restablecer diseño",
+      cursorMessages: [
+        "¡Ey! Justo estaba trabajando en eso",
+        "Cuidado, ese es mi cursor",
+        "Suéltame, estoy en medio de un commit",
+      ],
     },
     projects: {
       title: ["Proyectos", "destacados"],

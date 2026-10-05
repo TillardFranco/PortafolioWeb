@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   AnimatePresence,
+  animate,
   motion,
   useMotionValue,
   useReducedMotion,
@@ -36,10 +37,25 @@ const Tag = ({ children, tone }) => (
   </span>
 );
 
-/** A fake teammate cursor that wanders the hero, like a multiplayer canvas. */
-export const CollaboratorCursor = ({ containerRef, name, visible }) => {
+// Grabbing the cursor needs a mouse; touch screens just watch it.
+const canGrab = () =>
+  typeof window !== "undefined" && window.matchMedia("(pointer: fine)").matches;
+
+/**
+ * A fake teammate cursor that wanders the hero, like a multiplayer canvas.
+ * Visitors can grab it: it stops, complains in a bubble, and goes back to
+ * wandering once released.
+ */
+export const CollaboratorCursor = ({ containerRef, name, visible, messages }) => {
   const [size, setSize] = useState(null);
+  const [grabbed, setGrabbed] = useState(false);
+  const [message, setMessage] = useState(0);
+  const [grabbable] = useState(canGrab);
   const reduceMotion = useReducedMotion();
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const controls = useRef([]);
+  const resumeTimer = useRef(0);
 
   useEffect(() => {
     const el = containerRef.current;
@@ -52,6 +68,57 @@ export const CollaboratorCursor = ({ containerRef, name, visible }) => {
     return () => observer.disconnect();
   }, [containerRef]);
 
+  const stop = useCallback(() => {
+    controls.current.forEach((control) => control.stop());
+    controls.current = [];
+  }, []);
+
+  const wander = useCallback(() => {
+    if (!size) return;
+    stop();
+    const options = { duration: 18, ease: "easeInOut", repeat: Infinity };
+    controls.current = [
+      animate(x, PATH.map(([px]) => px * size.width), options),
+      animate(y, PATH.map(([, py]) => py * size.height), options),
+    ];
+  }, [size, stop, x, y]);
+
+  // Glides back to the start of the path, then keeps wandering.
+  const resume = useCallback(() => {
+    if (!size) return;
+    stop();
+    const [px, py] = PATH[0];
+    controls.current = [
+      animate(x, px * size.width, { duration: 1.4, ease: "easeInOut", onComplete: wander }),
+      animate(y, py * size.height, { duration: 1.4, ease: "easeInOut" }),
+    ];
+  }, [size, stop, wander, x, y]);
+
+  useEffect(() => {
+    if (visible) wander();
+    return () => {
+      clearTimeout(resumeTimer.current);
+      stop();
+    };
+  }, [visible, wander, stop]);
+
+  const grab = () => {
+    if (!grabbable) return;
+    clearTimeout(resumeTimer.current);
+    stop();
+    setMessage((index) => (index + 1) % messages.length);
+    setGrabbed(true);
+    window.addEventListener(
+      "pointerup",
+      () => {
+        setGrabbed(false);
+        // A short pause so the complaint can be read before it walks off.
+        resumeTimer.current = setTimeout(resume, 500);
+      },
+      { once: true }
+    );
+  };
+
   if (!size || reduceMotion) return null;
 
   return (
@@ -60,19 +127,19 @@ export const CollaboratorCursor = ({ containerRef, name, visible }) => {
         <motion.div
           key="collaborator"
           aria-hidden="true"
-          className="pointer-events-none absolute left-0 top-0 z-20 hidden md:block"
+          drag={grabbable}
+          dragMomentum={false}
+          dragElastic={0}
+          dragConstraints={containerRef}
+          onPointerDown={grab}
+          style={{ x, y }}
+          className={`absolute left-0 top-0 z-20 hidden select-none md:block ${
+            grabbable ? "cursor-grab active:cursor-grabbing" : "pointer-events-none"
+          }`}
           initial={{ opacity: 0 }}
+          animate={{ opacity: 1, scale: grabbed ? 1.08 : 1 }}
           exit={{ opacity: 0 }}
-          animate={{
-            opacity: 1,
-            x: PATH.map(([px]) => px * size.width),
-            y: PATH.map(([, py]) => py * size.height),
-          }}
-          transition={{
-            opacity: { duration: 0.3 },
-            x: { duration: 18, ease: "easeInOut", repeat: Infinity },
-            y: { duration: 18, ease: "easeInOut", repeat: Infinity },
-          }}
+          transition={{ duration: 0.25 }}
         >
           <MousePointer2
             className="absolute h-5 w-5 text-foreground"
@@ -80,6 +147,20 @@ export const CollaboratorCursor = ({ containerRef, name, visible }) => {
             strokeWidth={1.5}
           />
           <Tag tone="ink">{name}</Tag>
+          <AnimatePresence>
+            {grabbed && (
+              <motion.span
+                key={message}
+                initial={{ opacity: 0, y: 6, scale: 0.9 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 4, scale: 0.95 }}
+                transition={{ type: "spring", stiffness: 420, damping: 26 }}
+                className="absolute bottom-full left-6 mb-1 whitespace-nowrap rounded-2xl rounded-bl-sm bg-brand px-3 py-2 text-xs font-medium text-brand-foreground shadow-[0_10px_30px_-12px_rgba(15,20,35,0.5)]"
+              >
+                {messages[message]}
+              </motion.span>
+            )}
+          </AnimatePresence>
         </motion.div>
       )}
     </AnimatePresence>

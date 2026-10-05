@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { animate, useMotionValue } from "framer-motion";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { animate, motionValue } from "framer-motion";
 
 const STORAGE_KEY = "portfolio-hero-layout";
 const DESKTOP_QUERY = "(min-width: 1024px)";
@@ -26,27 +26,22 @@ const currentBreakpoint = () =>
 
 /**
  * Positions of the draggable hero items, persisted per visitor in localStorage.
- * Items that would end up outside the hero (after a resize) go back home.
+ * Items register by id the first time they render; items that would end up
+ * outside the hero (after a resize) go back home.
  */
 export const useCanvasLayout = (containerRef) => {
-  const firstX = useMotionValue(0);
-  const firstY = useMotionValue(0);
-  const lastX = useMotionValue(0);
-  const lastY = useMotionValue(0);
-  const bioX = useMotionValue(0);
-  const bioY = useMotionValue(0);
-
-  const positions = useMemo(
-    () => ({
-      first: { x: firstX, y: firstY },
-      last: { x: lastX, y: lastY },
-      bio: { x: bioX, y: bioY },
-    }),
-    [firstX, firstY, lastX, lastY, bioX, bioY]
-  );
-
+  const values = useRef(new Map());
   const elements = useRef({});
   const [moved, setMoved] = useState(false);
+
+  /** Motion values for an item, created on first use from the saved layout. */
+  const position = useCallback((id) => {
+    if (!values.current.has(id)) {
+      const saved = readLayout()[currentBreakpoint()]?.[id];
+      values.current.set(id, { x: motionValue(saved?.x ?? 0), y: motionValue(saved?.y ?? 0) });
+    }
+    return values.current.get(id);
+  }, []);
 
   const register = useCallback(
     (id) => (node) => {
@@ -58,20 +53,20 @@ export const useCanvasLayout = (containerRef) => {
   const persist = useCallback(() => {
     const layout = readLayout();
     const entry = {};
-    Object.entries(positions).forEach(([id, { x, y }]) => {
+    values.current.forEach(({ x, y }, id) => {
       if (x.get() || y.get()) entry[id] = { x: Math.round(x.get()), y: Math.round(y.get()) };
     });
     layout[currentBreakpoint()] = entry;
     writeLayout(layout);
     setMoved(Object.keys(entry).length > 0);
-  }, [positions]);
+  }, []);
 
   // Sends home any item whose center fell outside the hero.
   const keepInside = useCallback(() => {
     const container = containerRef.current?.getBoundingClientRect();
     if (!container) return;
     let changed = false;
-    Object.entries(positions).forEach(([id, { x, y }]) => {
+    values.current.forEach(({ x, y }, id) => {
       const rect = elements.current[id]?.getBoundingClientRect();
       if (!rect || (!x.get() && !y.get())) return;
       const cx = rect.left + rect.width / 2;
@@ -83,17 +78,17 @@ export const useCanvasLayout = (containerRef) => {
       }
     });
     if (changed) persist();
-  }, [containerRef, positions, persist]);
+  }, [containerRef, persist]);
 
   const restore = useCallback(() => {
     const saved = readLayout()[currentBreakpoint()] ?? {};
-    Object.entries(positions).forEach(([id, { x, y }]) => {
+    values.current.forEach(({ x, y }, id) => {
       x.set(saved[id]?.x ?? 0);
       y.set(saved[id]?.y ?? 0);
     });
     setMoved(Object.keys(saved).length > 0);
     requestAnimationFrame(keepInside);
-  }, [positions, keepInside]);
+  }, [keepInside]);
 
   useEffect(() => {
     restore();
@@ -108,7 +103,7 @@ export const useCanvasLayout = (containerRef) => {
   }, [containerRef, restore, keepInside]);
 
   const reset = useCallback(() => {
-    Object.values(positions).forEach(({ x, y }) => {
+    values.current.forEach(({ x, y }) => {
       animate(x, 0, { type: "spring", stiffness: 260, damping: 28 });
       animate(y, 0, { type: "spring", stiffness: 260, damping: 28 });
     });
@@ -116,7 +111,7 @@ export const useCanvasLayout = (containerRef) => {
     delete layout[currentBreakpoint()];
     writeLayout(layout);
     setMoved(false);
-  }, [positions]);
+  }, []);
 
-  return { positions, register, persist, reset, moved };
+  return { position, register, persist, reset, moved };
 };
