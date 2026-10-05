@@ -24,6 +24,7 @@ export const ui = {
       pixelMode: "Pixel mode",
       selection: "Text",
       you: "You",
+      resetLayout: "Reset layout",
     },
     projects: {
       title: ["Selected", "projects"],
@@ -83,6 +84,7 @@ export const ui = {
       pixelMode: "Modo píxel",
       selection: "Texto",
       you: "Tú",
+      resetLayout: "Restablecer diseño",
     },
     projects: {
       title: ["Proyectos", "destacados"],

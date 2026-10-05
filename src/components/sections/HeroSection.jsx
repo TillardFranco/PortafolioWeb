@@ -1,10 +1,11 @@
 import React, { useRef, useState } from "react";
-import { motion } from "framer-motion";
-import { ArrowDown, Users } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowDown, RotateCcw, Users } from "lucide-react";
 import GridLines from "@/components/GridLines";
 import PixelWord from "@/components/hero/PixelWord";
 import SelectionFrame from "@/components/hero/SelectionFrame";
 import { CollaboratorCursor, VisitorTag } from "@/components/hero/CanvasCursors";
+import { useCanvasLayout } from "@/components/hero/useCanvasLayout";
 import { profile } from "@/data/profile";
 import { useLanguage } from "@/i18n/LanguageProvider";
 import { cn } from "@/lib/utils";
@@ -18,21 +19,39 @@ const enter = (delay) => ({
 const wordClass =
   "text-[clamp(3.25rem,11.5vw,10rem)] font-semibold uppercase leading-none tracking-[-0.04em]";
 
-/** A word on the canvas: click to select it, drag it around, it springs back. */
-const CanvasWord = ({ selected, onSelect, label, children }) => (
-  <motion.div
-    drag
-    dragSnapToOrigin
-    dragElastic={0.35}
-    dragTransition={{ bounceStiffness: 300, bounceDamping: 22 }}
-    whileDrag={{ scale: 1.02 }}
-    onPointerDown={onSelect}
-    className="relative inline-block cursor-grab touch-none select-none active:cursor-grabbing"
-  >
-    {children}
-    {selected && <SelectionFrame label={label} />}
-  </motion.div>
-);
+// Dragging needs a mouse; on touch screens it would block page scrolling.
+const canDrag = () =>
+  typeof window !== "undefined" && window.matchMedia("(pointer: fine)").matches;
+
+/**
+ * An item on the canvas: click to select it, drag it anywhere inside the hero.
+ * It stays where it is dropped (see useCanvasLayout).
+ */
+const CanvasItem = ({ position, itemRef, constraintsRef, onDragEnd, selected, onSelect, label, className, children }) => {
+  const [draggable] = useState(canDrag);
+
+  return (
+    <motion.div
+      ref={itemRef}
+      drag={draggable}
+      dragMomentum={false}
+      dragElastic={0.06}
+      dragConstraints={constraintsRef}
+      onDragEnd={onDragEnd}
+      whileDrag={{ scale: 1.02, zIndex: 20 }}
+      style={{ x: position.x, y: position.y }}
+      onPointerDown={onSelect}
+      className={cn(
+        "relative inline-block select-none",
+        draggable && "cursor-grab touch-none active:cursor-grabbing",
+        className
+      )}
+    >
+      {children}
+      {selected && <SelectionFrame label={label} />}
+    </motion.div>
+  );
+};
 
 const Switch = ({ checked, onChange, label }) => (
   <button
@@ -64,6 +83,17 @@ const HeroSection = () => {
   const [selected, setSelected] = useState("first");
   const [collab, setCollab] = useState(true);
   const { t, pick } = useLanguage();
+  const layout = useCanvasLayout(canvasRef);
+
+  const canvasItem = (id) => ({
+    position: layout.positions[id],
+    itemRef: layout.register(id),
+    constraintsRef: canvasRef,
+    onDragEnd: layout.persist,
+    selected: selected === id,
+    onSelect: () => setSelected(id),
+    label: t("hero.selection"),
+  });
 
   const togglePixels = (value) => {
     setPixelated(value);
@@ -86,7 +116,8 @@ const HeroSection = () => {
       <VisitorTag containerRef={canvasRef} label={t("hero.you")} />
 
       <div className="relative mx-auto flex min-h-[calc(100dvh-4rem)] max-w-[1400px] flex-col px-4 pb-12 pt-6 md:px-6 md:pt-8">
-        <motion.div {...enter(0)} className="flex flex-wrap items-center gap-3">
+        {/* Controls stay above dropped items so they remain clickable. */}
+        <motion.div {...enter(0)} className="relative z-10 flex flex-wrap items-center gap-3">
           {profile.available && (
             <a
               href="#contact"
@@ -108,6 +139,21 @@ const HeroSection = () => {
             <Users className="h-3.5 w-3.5" strokeWidth={1.75} />
             {t(collab ? "hero.collabOn" : "hero.collabOff")}
           </button>
+          <AnimatePresence>
+            {layout.moved && (
+              <motion.button
+                type="button"
+                onClick={layout.reset}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                className="inline-flex items-center gap-2 rounded-full border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+              >
+                <RotateCcw className="h-3.5 w-3.5" strokeWidth={1.75} />
+                {t("hero.resetLayout")}
+              </motion.button>
+            )}
+          </AnimatePresence>
         </motion.div>
 
         <div className="flex flex-1 flex-col justify-center py-14 md:py-10">
@@ -117,32 +163,28 @@ const HeroSection = () => {
 
           <div className="grid grid-cols-1 items-start gap-y-8 lg:grid-cols-12 lg:gap-x-6 lg:gap-y-10">
             <motion.div {...enter(0.1)} className="order-1 lg:order-none lg:col-span-7" aria-hidden="true">
-              <CanvasWord
-                selected={selected === "first"}
-                onSelect={() => setSelected("first")}
-                label={t("hero.selection")}
-              >
+              <CanvasItem {...canvasItem("first")}>
                 <span className={wordClass}>{profile.firstName}</span>
-              </CanvasWord>
+              </CanvasItem>
             </motion.div>
 
-            <motion.p
+            <motion.div
               {...enter(0.25)}
-              className="order-3 max-w-[44ch] text-base leading-relaxed text-muted-foreground md:text-lg lg:order-none lg:col-span-4 lg:col-start-9 lg:pt-3"
+              className="order-3 lg:order-none lg:col-span-4 lg:col-start-9 lg:pt-3"
             >
-              {pick(profile.bio)}
-            </motion.p>
+              <CanvasItem {...canvasItem("bio")}>
+                <p className="max-w-[44ch] text-base leading-relaxed text-muted-foreground md:text-lg">
+                  {pick(profile.bio)}
+                </p>
+              </CanvasItem>
+            </motion.div>
 
             <motion.div
               {...enter(0.2)}
               className="order-2 lg:order-none lg:col-span-9 lg:col-start-4"
               aria-hidden="true"
             >
-              <CanvasWord
-                selected={selected === "last"}
-                onSelect={() => setSelected("last")}
-                label={t("hero.selection")}
-              >
+              <CanvasItem {...canvasItem("last")}>
                 <span className={cn(wordClass, "block")}>
                   {pixelated ? (
                     <PixelWord text={profile.lastName.toUpperCase()} />
@@ -150,12 +192,12 @@ const HeroSection = () => {
                     profile.lastName
                   )}
                 </span>
-              </CanvasWord>
+              </CanvasItem>
             </motion.div>
 
             <motion.div
               {...enter(0.35)}
-              className="order-4 flex flex-wrap items-center gap-x-8 gap-y-4 lg:order-none lg:col-span-6 lg:col-start-4"
+              className="relative z-10 order-4 flex flex-wrap items-center gap-x-8 gap-y-4 lg:order-none lg:col-span-6 lg:col-start-4"
             >
               <a
                 href="#projects"
