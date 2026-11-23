@@ -17,7 +17,7 @@ export const profile = {
     es: ["De la idea", "a producción"],
   },
   email: "tillardtomasfranco@gmail.com",
-  photo: "/profile-photo.png",
+  photo: "/profile-photo.webp",
   cv: "/CurriculumVitae-TillardFrancoTomas.pdf",
   available: true,
   links: {
