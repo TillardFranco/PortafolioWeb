@@ -94,6 +94,13 @@
   }
 }
 
+/* Terminal-style caret blink for the logo mark (see LogoMark.jsx). */
+@keyframes caret-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
