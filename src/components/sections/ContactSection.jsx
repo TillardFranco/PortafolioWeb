@@ -41,10 +41,10 @@ const ContactSection = () => {
   return (
     <section id="contact" className="scroll-mt-16">
       <div className="mx-auto grid max-w-[1400px] gap-14 px-4 py-20 md:px-6 md:py-32 lg:grid-cols-12 lg:gap-6">
-        <div className="lg:col-span-8">
+        <div className="min-w-0 lg:col-span-8">
           <motion.h2
             {...reveal()}
-            className="text-[clamp(2.75rem,8vw,7rem)] font-semibold uppercase leading-[0.92] tracking-[-0.04em]"
+            className="text-[clamp(2rem,9vw,7rem)] font-semibold uppercase leading-[0.92] tracking-[-0.04em]"
           >
             {titleTop}
             <br />
