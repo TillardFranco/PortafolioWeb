@@ -1,79 +1,105 @@
 import React, { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowUpRight, Github } from "lucide-react";
+import { ArrowUpRight, Github, Grid2x2, Grid3x3, Rows } from "lucide-react";
 import { devbit, projects } from "@/data/profile";
 import { useLanguage } from "@/i18n/LanguageProvider";
 import { cn } from "@/lib/utils";
 
-const reveal = {
-  initial: { opacity: 0, y: 40 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, amount: 0.2 },
-  transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] },
+/** Card sizes the visitor can pick; on phones every size collapses to one column. */
+const SIZES = [
+  { id: "sm", labelKey: "projects.sizeSmall", icon: Grid3x3, grid: "md:grid-cols-2 lg:grid-cols-3" },
+  { id: "md", labelKey: "projects.sizeMedium", icon: Grid2x2, grid: "md:grid-cols-2" },
+  { id: "lg", labelKey: "projects.sizeLarge", icon: Rows, grid: "" },
+];
+const SIZE_KEY = "projects-card-size";
+
+// Remember the chosen size per visitor; storage can be unavailable (private mode), so never rely on it.
+const readSize = () => {
+  try {
+    const saved = window.localStorage.getItem(SIZE_KEY);
+    return SIZES.some((size) => size.id === saved) ? saved : "sm";
+  } catch {
+    return "sm";
+  }
 };
 
-const Field = ({ label, children }) => (
-  <div className="space-y-3">
-    <p className="label-caps">{label}</p>
-    {children}
-  </div>
-);
+const writeSize = (value) => {
+  try {
+    window.localStorage.setItem(SIZE_KEY, value);
+  } catch {
+    // Not persisted; the choice still applies for this visit.
+  }
+};
 
 const ProjectLink = ({ href, icon: Icon, children }) => (
   <a
     href={href}
     target="_blank"
     rel="noopener noreferrer"
-    className="inline-flex items-center gap-2 rounded-full border bg-card px-4 py-2 text-xs font-medium uppercase tracking-[0.08em] transition-colors hover:border-foreground/30 active:scale-[0.98]"
+    className="inline-flex items-center gap-2 rounded-full border bg-card px-3.5 py-1.5 text-[11px] font-medium uppercase tracking-[0.08em] transition-colors hover:border-foreground/30 active:scale-[0.98]"
   >
     <Icon className="h-3.5 w-3.5" strokeWidth={1.75} />
     {children}
   </a>
 );
 
-const ProjectRow = ({ project, reversed }) => {
+/** One project, shared by the Featured and Dev.Bit tabs. */
+const ProjectCard = ({ project, size }) => {
   const { t, pick } = useLanguage();
   const title = pick(project.title);
+  const eyebrow = pick(project.subtitle ?? project.category);
+  const wide = size === "lg";
 
   return (
-    <motion.article
-      {...reveal}
-      className="grid grid-cols-1 border-b lg:grid-cols-12"
-    >
+    <article className={cn("flex flex-col border bg-card", wide && "lg:grid lg:grid-cols-12")}>
       <div
         className={cn(
-          "flex flex-col gap-8 px-4 py-10 md:px-8 lg:col-span-4",
-          reversed ? "lg:order-2 lg:border-l" : "lg:border-r"
+          "group relative overflow-hidden border-b",
+          project.imageIsLogo ? "grid aspect-[16/10] place-items-center bg-white" : "aspect-[16/10] bg-secondary",
+          wide && "lg:col-span-7 lg:border-b-0 lg:border-r"
         )}
       >
-        <Field label={t("projects.project")}>
-          <h3 className="text-2xl font-medium leading-tight tracking-tight md:text-3xl">
-            {title}
-          </h3>
-          <p className="text-sm text-muted-foreground">{pick(project.subtitle)}</p>
-        </Field>
+        <img
+          src={project.image}
+          alt={`${title} ${t(project.imageIsLogo ? "projects.logo" : "projects.screenshot")}`}
+          loading="lazy"
+          className={cn(
+            "transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]",
+            project.imageIsLogo ? "h-2/5 w-auto object-contain" : "h-full w-full object-cover object-top"
+          )}
+        />
+      </div>
 
-        <Field label={t("projects.technologies")}>
-          <ul className="flex flex-wrap gap-1.5">
-            {project.tags.map((tag) => (
-              <li
-                key={tag}
-                className="bg-secondary px-2.5 py-1 font-mono text-xs text-secondary-foreground"
-              >
-                {tag}
-              </li>
-            ))}
-          </ul>
-        </Field>
-
-        <Field label={t("projects.description")}>
-          <p className="max-w-[46ch] text-sm leading-relaxed text-muted-foreground">
-            {pick(project.description)}
-          </p>
-        </Field>
-
+      <div className={cn("flex flex-1 flex-col gap-3 p-5", wide && "lg:col-span-5 lg:gap-4 lg:p-8")}>
+        {eyebrow && <p className="label-caps">{eyebrow}</p>}
+        <h3
+          className={cn(
+            "font-medium leading-tight tracking-tight",
+            wide ? "text-2xl md:text-3xl" : "text-xl"
+          )}
+        >
+          {title}
+        </h3>
+        <p
+          className={cn(
+            "text-sm leading-relaxed text-muted-foreground",
+            size === "sm" && "line-clamp-3"
+          )}
+        >
+          {pick(project.description)}
+        </p>
+        <ul className="flex flex-wrap gap-1.5">
+          {project.tags.map((tag) => (
+            <li
+              key={tag}
+              className="bg-secondary px-2 py-0.5 font-mono text-[11px] text-secondary-foreground"
+            >
+              {tag}
+            </li>
+          ))}
+        </ul>
         {(project.link || project.github) && (
-          <div className="mt-auto flex flex-wrap gap-2">
+          <div className="mt-auto flex flex-wrap gap-2 pt-2">
             {project.link && (
               <ProjectLink href={project.link} icon={ArrowUpRight}>
                 {t("projects.liveSite")}
@@ -87,78 +113,40 @@ const ProjectRow = ({ project, reversed }) => {
           </div>
         )}
       </div>
-
-      <div className="p-4 md:p-6 lg:col-span-8">
-        <div
-          className={cn(
-            "group relative aspect-[16/10] overflow-hidden border",
-            project.imageIsLogo ? "grid place-items-center bg-white" : "bg-secondary"
-          )}
-        >
-          <img
-            src={project.image}
-            alt={`${title} ${t(project.imageIsLogo ? "projects.logo" : "projects.screenshot")}`}
-            loading="lazy"
-            className={cn(
-              "transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]",
-              project.imageIsLogo
-                ? "h-1/2 w-auto object-contain"
-                : "h-full w-full object-cover object-top"
-            )}
-          />
-        </div>
-      </div>
-    </motion.article>
+    </article>
   );
 };
 
-const ClientCard = ({ project }) => {
-  const { t, pick } = useLanguage();
+const SizePicker = ({ value, onChange }) => {
+  const { t } = useLanguage();
 
   return (
-    <article className="flex flex-col border-b md:odd:border-r">
-      <a
-        href={project.link}
-        target="_blank"
-        rel="noopener noreferrer"
-        tabIndex={-1}
-        aria-hidden="true"
-        className="group m-4 block aspect-[3/2] overflow-hidden border bg-secondary md:m-6"
-      >
-        <img
-          src={project.image}
-          alt=""
-          width="1200"
-          height="800"
-          loading="lazy"
-          className="h-full w-full object-cover object-top transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
-        />
-      </a>
-      <div className="flex flex-1 flex-col gap-4 px-4 pb-10 md:px-6">
-        <p className="label-caps">{pick(project.category)}</p>
-        <h3 className="text-2xl font-medium leading-tight tracking-tight">
-          {project.title}
-        </h3>
-        <p className="max-w-[52ch] text-sm leading-relaxed text-muted-foreground">
-          {pick(project.description)}
-        </p>
-        <ul className="flex flex-wrap gap-1.5">
-          {project.tags.map((tag) => (
-            <li
-              key={tag}
-              className="bg-secondary px-2.5 py-1 font-mono text-xs text-secondary-foreground"
-            >
-              {tag}
-            </li>
-          ))}
-        </ul>
-        <div className="mt-auto pt-2">
-          <ProjectLink href={project.link} icon={ArrowUpRight}>
-            {t("projects.liveSite")}
-          </ProjectLink>
-        </div>
-      </div>
-    </article>
+    <div
+      role="radiogroup"
+      aria-label={t("projects.viewSize")}
+      className="hidden rounded-full border bg-card p-1 md:inline-flex"
+    >
+      {SIZES.map(({ id, labelKey, icon: Icon }) => {
+        const checked = id === value;
+        return (
+          <button
+            key={id}
+            type="button"
+            role="radio"
+            aria-checked={checked}
+            aria-label={t(labelKey)}
+            title={t(labelKey)}
+            onClick={() => onChange(id)}
+            className={cn(
+              "grid h-8 w-9 place-items-center rounded-full transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+              checked ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            <Icon className="h-4 w-4" strokeWidth={1.75} />
+          </button>
+        );
+      })}
+    </div>
   );
 };
 
@@ -228,32 +216,31 @@ const ProjectsSection = () => {
   const { t } = useLanguage();
   const [titleTop, titleBottom] = t("projects.title");
   const [tab, setTab] = useState("featured");
+  const [size, setSize] = useState(readSize);
+
+  const changeSize = (value) => {
+    setSize(value);
+    writeSize(value);
+  };
+
+  const list = tab === "featured" ? projects : devbit.projects;
+  const grid = SIZES.find((option) => option.id === size).grid;
 
   return (
     <section id="projects" className="relative scroll-mt-16">
-      <div className="mx-auto max-w-[1400px] px-4 pb-14 pt-20 md:px-6 md:pt-28">
-        <motion.h2
-          {...reveal}
-          className="text-[clamp(2.5rem,6vw,5rem)] font-semibold uppercase leading-[0.95] tracking-[-0.04em]"
-        >
+      <div className="mx-auto max-w-[1400px] px-4 pb-10 pt-20 md:px-6 md:pt-28">
+        <h2 className="text-[clamp(2.5rem,6vw,5rem)] font-semibold uppercase leading-[0.95] tracking-[-0.04em]">
           {titleTop}
           <br />
           {titleBottom}
-        </motion.h2>
-        <motion.p
-          {...reveal}
-          transition={{ ...reveal.transition, delay: 0.1 }}
-          className="mt-6 max-w-[52ch] text-muted-foreground md:text-lg"
-        >
+        </h2>
+        <p className="mt-6 max-w-[52ch] text-muted-foreground md:text-lg">
           {t("projects.lead")}
-        </motion.p>
-        <motion.div
-          {...reveal}
-          transition={{ ...reveal.transition, delay: 0.15 }}
-          className="mt-10"
-        >
+        </p>
+        <div className="mt-10 flex flex-wrap items-center justify-between gap-4">
           <ProjectTabs active={tab} onChange={setTab} />
-        </motion.div>
+          <SizePicker value={size} onChange={changeSize} />
+        </div>
       </div>
 
       <AnimatePresence mode="wait" initial={false}>
@@ -262,43 +249,34 @@ const ProjectsSection = () => {
           id={`panel-${tab}`}
           role="tabpanel"
           aria-labelledby={`tab-${tab}`}
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -8 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
           transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-          className="mx-auto max-w-[1400px] border-t md:border-x"
+          className="mx-auto max-w-[1400px] px-4 pb-20 md:px-6 md:pb-28"
         >
-          {tab === "featured" ? (
-            projects.map((project, index) => (
-              <ProjectRow
-                key={project.image}
-                project={project}
-                reversed={index % 2 === 1}
-              />
-            ))
-          ) : (
-            <>
-              <div className="flex flex-wrap items-center justify-between gap-4 border-b px-4 py-6 md:px-6">
-                <p className="max-w-[52ch] text-sm text-muted-foreground md:text-base">
-                  {t("projects.devbitLead")}
-                </p>
-                <a
-                  href={devbit.site}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-sm uppercase tracking-[0.08em] transition-colors hover:text-brand"
-                >
-                  {t("projects.devbitVisit")}
-                  <ArrowUpRight className="h-4 w-4" strokeWidth={1.75} />
-                </a>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2">
-                {devbit.projects.map((project) => (
-                  <ClientCard key={project.title} project={project} />
-                ))}
-              </div>
-            </>
+          {tab === "devbit" && (
+            <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+              <p className="max-w-[52ch] text-sm text-muted-foreground md:text-base">
+                {t("projects.devbitLead")}
+              </p>
+              <a
+                href={devbit.site}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 text-sm uppercase tracking-[0.08em] transition-colors hover:text-brand"
+              >
+                {t("projects.devbitVisit")}
+                <ArrowUpRight className="h-4 w-4" strokeWidth={1.75} />
+              </a>
+            </div>
           )}
+
+          <div className={cn("grid grid-cols-1 gap-4 md:gap-6", grid)}>
+            {list.map((project) => (
+              <ProjectCard key={project.image} project={project} size={size} />
+            ))}
+          </div>
         </motion.div>
       </AnimatePresence>
     </section>

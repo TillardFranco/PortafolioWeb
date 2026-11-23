@@ -14,6 +14,8 @@ export const ui = {
       cv: "CV",
       home: "Back to top",
       toggleTheme: "Toggle theme",
+      openMenu: "Open menu",
+      closeMenu: "Close menu",
       switchLanguage: "Ver en español",
     },
     hero: {
@@ -46,6 +48,10 @@ export const ui = {
       tabDevbit: "Dev.Bit",
       devbitLead: "Client projects delivered at Dev.Bit, the studio I co-founded.",
       devbitVisit: "Visit Dev.Bit",
+      viewSize: "Card size",
+      sizeSmall: "Small: three per row",
+      sizeMedium: "Medium: two per row",
+      sizeLarge: "Large: one per row",
     },
     experience: {
       title: "Where I build and where I learn.",
@@ -79,6 +85,8 @@ export const ui = {
       cv: "CV",
       home: "Volver arriba",
       toggleTheme: "Cambiar tema",
+      openMenu: "Abrir menú",
+      closeMenu: "Cerrar menú",
       switchLanguage: "View in English",
     },
     hero: {
@@ -111,6 +119,10 @@ export const ui = {
       tabDevbit: "Dev.Bit",
       devbitLead: "Proyectos para clientes entregados en Dev.Bit, el estudio que cofundé.",
       devbitVisit: "Visitar Dev.Bit",
+      viewSize: "Tamaño de las tarjetas",
+      sizeSmall: "Chico: tres por fila",
+      sizeMedium: "Mediano: dos por fila",
+      sizeLarge: "Grande: una por fila",
     },
     experience: {
       title: "Dónde construyo y dónde aprendo.",
