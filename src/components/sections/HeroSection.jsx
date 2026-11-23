@@ -2,6 +2,7 @@ import React, { useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowDown, RotateCcw, Users } from "lucide-react";
 import GridLines from "@/components/GridLines";
+import DropLetters from "@/components/hero/DropLetters";
 import PixelWord from "@/components/hero/PixelWord";
 import SelectionFrame from "@/components/hero/SelectionFrame";
 import { CollaboratorCursor, VisitorTag } from "@/components/hero/CanvasCursors";
@@ -201,11 +202,14 @@ const HeroSection = () => {
           </h1>
 
           <div className="grid grid-cols-1 items-start gap-y-8 lg:grid-cols-12 lg:gap-x-6 lg:gap-y-10">
-            <motion.div {...enter(0.1)} className="order-1 lg:order-none lg:col-span-7" aria-hidden="true">
+            {/* No fade on this wrapper: DropLetters owns the first name's entrance. */}
+            <div className="order-1 lg:order-none lg:col-span-7" aria-hidden="true">
               <CanvasItem {...canvasItem("first", { selectable: true })}>
-                <span className={wordClass}>{profile.firstName}</span>
+                <span className={wordClass}>
+                  <DropLetters text={profile.firstName} delay={0.15} />
+                </span>
               </CanvasItem>
-            </motion.div>
+            </div>
 
             <motion.div
               {...enter(0.25)}
@@ -228,7 +232,7 @@ const HeroSection = () => {
                   {pixelated ? (
                     <PixelWord text={profile.lastName.toUpperCase()} />
                   ) : (
-                    profile.lastName
+                    <DropLetters text={profile.lastName} />
                   )}
                 </span>
               </CanvasItem>

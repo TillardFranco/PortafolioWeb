@@ -1,6 +1,10 @@
-import React from "react";
+import React, { useRef } from "react";
 import { stack } from "@/data/profile";
 import { useLanguage } from "@/i18n/LanguageProvider";
+import { FULL_MOTION, gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
+
+const BASE_DURATION = 40; // seconds for one full loop at rest
+const MAX_BOOST = 5; // fastest multiplier reached while scrolling hard
 
 const Track = ({ hidden }) => (
   <ul aria-hidden={hidden || undefined} className="flex shrink-0 items-center">
@@ -18,13 +22,81 @@ const Track = ({ hidden }) => (
 
 const StackSection = () => {
   const { t } = useLanguage();
+  const sectionRef = useRef(null);
+  const trackRef = useRef(null);
+
+  // Scroll-reactive marquee: drifts at rest, speeds up with scroll velocity,
+  // follows the scroll direction, and eases back once scrolling stops.
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
+      mm.add(FULL_MOTION, () => {
+        const loop = gsap.to(trackRef.current, {
+          xPercent: -50,
+          duration: BASE_DURATION,
+          ease: "none",
+          repeat: -1,
+        });
+        // Park the playhead far from zero so a negative timeScale can run backwards indefinitely.
+        loop.totalTime(loop.duration() * 1000);
+
+        let direction = 1;
+        let hovered = false;
+
+        const settle = () =>
+          gsap.to(loop, { timeScale: direction, duration: 1.2, ease: "power3.out", overwrite: true });
+
+        ScrollTrigger.create({
+          onUpdate: (self) => {
+            if (hovered) return;
+            direction = self.direction;
+            const boost = gsap.utils.clamp(1, MAX_BOOST, 1 + Math.abs(self.getVelocity()) / 400);
+            gsap.to(loop, {
+              timeScale: boost * direction,
+              duration: 0.25,
+              ease: "power2.out",
+              overwrite: true,
+              onComplete: settle,
+            });
+          },
+        });
+
+        // Pause on hover so a visitor can read a name, like the old CSS marquee did.
+        const section = sectionRef.current;
+        const onEnter = () => {
+          hovered = true;
+          gsap.to(loop, { timeScale: 0, duration: 0.4, ease: "power2.out", overwrite: true });
+        };
+        const onLeave = () => {
+          hovered = false;
+          settle();
+        };
+        section.addEventListener("pointerenter", onEnter);
+        section.addEventListener("pointerleave", onLeave);
+
+        return () => {
+          section.removeEventListener("pointerenter", onEnter);
+          section.removeEventListener("pointerleave", onLeave);
+        };
+      });
+      return () => mm.revert();
+    },
+    { scope: sectionRef }
+  );
 
   return (
-    <section aria-labelledby="stack-title" className="overflow-hidden border-b py-12 md:py-16">
+    <section
+      ref={sectionRef}
+      aria-labelledby="stack-title"
+      className="overflow-hidden border-b py-12 md:py-16"
+    >
       <h2 id="stack-title" className="label-caps mx-auto mb-8 max-w-[1400px] px-4 md:px-6">
         {t("stack.title")}
       </h2>
-      <div className="flex w-max animate-marquee hover:[animation-play-state:paused] motion-reduce:w-auto motion-reduce:flex-wrap motion-reduce:px-4">
+      <div
+        ref={trackRef}
+        className="flex w-max will-change-transform motion-reduce:w-auto motion-reduce:flex-wrap motion-reduce:px-4"
+      >
         <Track />
         <div className="motion-reduce:hidden">
           <Track hidden />
